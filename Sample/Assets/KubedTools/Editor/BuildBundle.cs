@@ -38,7 +38,13 @@ public class BuildBundle
     {
        
 
-        return Path.Combine(FindLocalFolder(), "nobodyshot/Sandbox/PublicGames/af865b6ba2e43b458fde2f29aad18eff");
+        var locallow = Path.Combine(FindLocalFolder(), "nobodyshot/Sandbox/PublicGames/af865b6ba2e43b458fde2f29aad18eff");
+
+        if (Directory.Exists(locallow))
+            return locallow;
+
+       return EditorUtility.SaveFolderPanel("Build game", "", "build");
+
 
     }
 
