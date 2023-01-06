@@ -9,8 +9,8 @@ function script.Start()
    print("Start")
 end
 
-function script.Update()
-   print("Update")
+function script:Update()
+   print( string.format( "%s %s" , self.var, script.var ) );
 end
 
 function script.OnEnable()

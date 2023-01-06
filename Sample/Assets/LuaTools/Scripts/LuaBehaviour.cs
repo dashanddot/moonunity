@@ -7,6 +7,41 @@ using MoonSharp.Interpreter.Loaders;
 
 using System.IO;
 
+[System.Serializable]
+public struct LuaKeyDict
+{
+    public List<string> Keys;
+    public List<string> Values;
+
+    public string this[string index]
+    {
+        get
+        {
+            int ii = Keys.IndexOf(index);
+
+            if (ii < 0)
+                return "";
+
+            return Values[ii];
+        }
+
+        set
+        {
+            int ii = Keys.IndexOf(index);
+
+            if (ii < 0)
+            {
+                ii = Keys.Count;
+                Keys.Add(index);
+                Values.Add("");
+            }
+
+            Values[ii] = value;
+        }
+    }
+}
+
+
 public class SanboxLuaLoader : IScriptLoader
 {
     public bool ScriptFileExists(string name)
@@ -40,6 +75,9 @@ public class LuaBehaviour : MonoBehaviour
 
     protected Closure _update;
 
+    [HideInInspector]
+    public LuaKeyDict _dict;
+
     public void Awake()
     {
 
@@ -51,6 +89,11 @@ public class LuaBehaviour : MonoBehaviour
         _script.Options.DebugPrint = (s) => Debug.Log(s);
 
         _module = _script.DoString(script.text);
+
+        foreach ( var kk in _dict.Keys)
+        {
+            _module.Table[kk] = DynValue.NewString( _dict[kk] );
+        }
 
         _module.Table.Get("Awake").Function?.Call();
 
@@ -68,12 +111,12 @@ public class LuaBehaviour : MonoBehaviour
     public void Update()
     {
         if (_update!=null)
-            _update.Call();
+            _update.Call( _module );
     }
 
     private void OnEnable()
     {
-        _module.Table.Get("OnEnable").Function?.Call();
+        _module.Table.Get("OnEnable").Function?.Call(_module);
     }
 
     private void OnDisable()

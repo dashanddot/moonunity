@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Globalization;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -62,19 +63,46 @@ public class LuaBehaviourEditor : Editor
         Rect subHeaderRect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight * 2.5f);
         Rect helpBoxRect = new Rect(subHeaderRect.x, subHeaderRect.y, subHeaderRect.width - subHeaderRect.width / 6 - 5f, subHeaderRect.height);
         Rect rawTextModeButtonRect = new Rect(subHeaderRect.x + subHeaderRect.width / 6 * 5, subHeaderRect.y, subHeaderRect.width / 6, subHeaderRect.height);
-        EditorGUI.HelpBox(helpBoxRect, "You edit raw text if the JSON editor isn't enough by clicking the button to the right", MessageType.Info);
+        EditorGUI.HelpBox(helpBoxRect, "You can change public propertiest of script here", MessageType.Info);
 
         Rect fieldRect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight );
         EditorGUILayout.ObjectField(serializedObject.FindProperty("script"));
 
-        foreach(var xx in _module.Table.Keys)
+        var dict = serializedObject.FindProperty("_dict");
+        var k = dict.FindPropertyRelative("Keys");
+        var v = dict.FindPropertyRelative("Values");
+
+        int dictSize = 0;
+
+        if (k.arraySize != v.arraySize || k.arraySize != _module.Table.Length )
+        {
+            k.ClearArray();
+            v.ClearArray();
+        }
+
+        foreach (var xx in _module.Table.Keys)
         {
             var cfield = _module.Table.Get(xx);
 
             if (cfield?.Type == DataType.Function)
                 continue;
 
-            EditorGUILayout.TextField(new GUIContent(xx.String), cfield.CastToString() );
+            var prew = v.arraySize > dictSize? v.GetArrayElementAtIndex(dictSize) : null;
+
+            string kv = prew != null ? prew.stringValue : cfield.CastToString();
+
+            kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
+
+            if (dictSize <= k.arraySize)
+            {
+                k.InsertArrayElementAtIndex(dictSize);
+                v.InsertArrayElementAtIndex(dictSize);
+            }
+
+            k.GetArrayElementAtIndex(dictSize).stringValue = xx.String;
+            v.GetArrayElementAtIndex(dictSize).stringValue = kv;
+
+            dictSize++;
         }
 
 

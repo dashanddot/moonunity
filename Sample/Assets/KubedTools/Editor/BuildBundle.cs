@@ -36,9 +36,9 @@ public class BuildBundle
 
     static string FindProjectPath()
     {
-       
+        string projectId = "m5";
 
-        var locallow = Path.Combine(FindLocalFolder(), "nobodyshot/Sandbox/PublicGames/af865b6ba2e43b458fde2f29aad18eff");
+         var locallow = Path.Combine(FindLocalFolder(), $"nobodyshot/Sandbox/MyProjects/{projectId}");
 
         if (Directory.Exists(locallow))
             return locallow;
