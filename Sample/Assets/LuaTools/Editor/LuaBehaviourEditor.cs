@@ -37,8 +37,9 @@ public class LuaBehaviourEditor : Editor
 
         var script = new Script();
 
- 
-        _module = script.DoString(_asset.text);
+
+        if(_asset)
+            _module = script.DoString(_asset.text);
     }
 
     private void OnDisable()
@@ -68,43 +69,47 @@ public class LuaBehaviourEditor : Editor
         Rect fieldRect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight );
         EditorGUILayout.ObjectField(serializedObject.FindProperty("script"));
 
-        var dict = serializedObject.FindProperty("_dict");
-        var k = dict.FindPropertyRelative("Keys");
-        var v = dict.FindPropertyRelative("Values");
-
-        int dictSize = 0;
-
-        if (k.arraySize != v.arraySize || k.arraySize != _module.Table.Length )
+        if (_module != null)
         {
-            k.ClearArray();
-            v.ClearArray();
-        }
 
-        foreach (var xx in _module.Table.Keys)
-        {
-            var cfield = _module.Table.Get(xx);
+            var dict = serializedObject.FindProperty("_dict");
+            var k = dict.FindPropertyRelative("Keys");
+            var v = dict.FindPropertyRelative("Values");
 
-            if (cfield?.Type == DataType.Function)
-                continue;
+            int dictSize = 0;
 
-            var prew = v.arraySize > dictSize? v.GetArrayElementAtIndex(dictSize) : null;
-
-            string kv = prew != null ? prew.stringValue : cfield.CastToString();
-
-            kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
-
-            if (dictSize <= k.arraySize)
+            if (k.arraySize != v.arraySize || k.arraySize != _module.Table.Length)
             {
-                k.InsertArrayElementAtIndex(dictSize);
-                v.InsertArrayElementAtIndex(dictSize);
+                k.ClearArray();
+                v.ClearArray();
             }
 
-            k.GetArrayElementAtIndex(dictSize).stringValue = xx.String;
-            v.GetArrayElementAtIndex(dictSize).stringValue = kv;
+            foreach (var xx in _module.Table.Keys)
+            {
+                var cfield = _module.Table.Get(xx);
 
-            dictSize++;
+                if (cfield?.Type == DataType.Function)
+                    continue;
+
+                var prew = v.arraySize > dictSize ? v.GetArrayElementAtIndex(dictSize) : null;
+
+                string kv = prew != null ? prew.stringValue : cfield.CastToString();
+
+                kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
+
+                if (dictSize <= k.arraySize)
+                {
+                    k.InsertArrayElementAtIndex(dictSize);
+                    v.InsertArrayElementAtIndex(dictSize);
+                }
+
+                k.GetArrayElementAtIndex(dictSize).stringValue = xx.String;
+                v.GetArrayElementAtIndex(dictSize).stringValue = kv;
+
+                dictSize++;
+            }
+
         }
-
 
         serializedObject.ApplyModifiedProperties();
     }

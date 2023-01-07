@@ -100,18 +100,40 @@ public class LuaBehaviour : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    public void Start()
+    public IEnumerator Start()
     {
-        _module.Table.Get("Start").Function?.Call();
-
         _update = _module.Table.Get("Update").Function;
+
+        var sco = _module.Table.Get("Start");
+
+        if (sco.Function == null)
+            yield break;
+
+        sco = _script.CreateCoroutine(sco);
+
+       
+
+        while (true)
+        {
+            DynValue x = sco.Coroutine.Resume();
+
+            yield return new WaitForSeconds((float)x.Number);
+
+            if (sco.Coroutine.State == CoroutineState.Dead)
+                break;
+        }
+
+        yield break;
     }
+
+    protected DynValue _urq;
+    protected float nextUpdate = 0;
 
     // Update is called once per frame
     public void Update()
     {
-        if (_update!=null)
-            _update.Call( _module );
+        if(_update!=null)
+        _update.Call(_module);
     }
 
     private void OnEnable()
@@ -122,6 +144,16 @@ public class LuaBehaviour : MonoBehaviour
     private void OnDisable()
     {
         _module.Table.Get("OnDisable").Function?.Call();
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        _module.Table.Get("OnTriggerEnter").Function?.Call(_module, UserData.Create( other ) );
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        _module.Table.Get("OnTriggerExit").Function?.Call(_module, UserData.Create(other));
     }
 
 }
