@@ -6,11 +6,19 @@ function script.Awake()
 end
 
 function script.Start()
-   print("Start")
+   print("Start");
+
+   print( "1" );
+   coroutine.yield(0.5);
+   print( "2" );
+   coroutine.yield(0.5);
+   print( "3" );
+   coroutine.yield(1);
 end
 
 function script:Update()
-   print( string.format( "%s %s" , self.var, script.var ) );
+   --print( string.format( "%s %s" , self.var, script.var ) );
+
 end
 
 function script.OnEnable()
