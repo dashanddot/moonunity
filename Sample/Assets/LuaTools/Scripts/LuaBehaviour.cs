@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 
@@ -12,6 +13,8 @@ public class LuaKeyValueAny
 {
     public string key;
     public string value;
+
+    [SerializeReference]
     public UnityEngine.Object ovalue;
 
 }
@@ -69,7 +72,11 @@ public class LuaBehaviour : MonoBehaviour, ISerializationCallbackReceiver
             _module.Table[kk.key] =  kk.value;
         }
 
-        _module.Table.Get("Awake").Function?.Call();
+        UserData.RegisterType<GameObject>();
+
+        _script.Globals.Set("gameObject", UserData.Create( gameObject ) ) ;
+
+        _module.Table.Get("Awake").Function?.Call(_module);
 
     }
 

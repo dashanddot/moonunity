@@ -455,10 +455,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   script: {fileID: 2811297602134710623, guid: c468b074592e29144ad6fcf306551d0a, type: 3}
   _dict:
-    Keys:
-    - var
-    Values:
-    - 32
+  - key: var
+    value: 64
+    ovalue: {fileID: 0}
+  - key: var
+    value: 64
+    ovalue: {fileID: 854382645}
 --- !u!4 &965735937
 Transform:
   m_ObjectHideFlags: 0
@@ -504,9 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   script: {fileID: 2811297602134710623, guid: 56db4f84162d42249929c3d1793e2bb5, type: 3}
-  _dict:
-    Keys: []
-    Values: []
+  _dict: []
 --- !u!65 &1679996308
 BoxCollider:
   m_ObjectHideFlags: 0

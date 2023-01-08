@@ -1,12 +1,12 @@
 
 local script =  {}
 
-function script.Awake()
+function script:Awake()
    print("Awake")
 end
 
-function script.Start()
-   print("Start");
+function script:Start()
+   print( string.format("Start %s", self.var ) );
 
    print( "1" );
    coroutine.yield(0.5);
@@ -14,6 +14,8 @@ function script.Start()
    coroutine.yield(0.5);
    print( "3" );
    coroutine.yield(1);
+
+   gameObject:SetActive(false);
 end
 
 function script:Update()
@@ -21,14 +23,15 @@ function script:Update()
 
 end
 
-function script.OnEnable()
+function script:OnEnable()
    print("OnEnable")
 end
 
-function script.OnDisable()
+function script:OnDisable()
    print("OnDisable")
 end
 
 script.var = 32;
+script.ovar = nil;
 
 return script;

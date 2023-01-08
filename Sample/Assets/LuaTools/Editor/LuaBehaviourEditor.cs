@@ -84,13 +84,11 @@ public class LuaBehaviourEditor : Editor
                 if (cfield?.Type == DataType.Function)
                     continue;
 
-                var prew = dict.arraySize > dictSize ? dict.GetArrayElementAtIndex(dictSize) : null;
+                
 
-                string kv = prew != null ? prew.FindPropertyRelative("value").stringValue : cfield.CastToString();
+                
 
-                kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
-
-                if (dictSize <= dict.arraySize)
+                if (dictSize >= dict.arraySize)
                 {
                     dict.InsertArrayElementAtIndex(dictSize);
                    
@@ -98,8 +96,31 @@ public class LuaBehaviourEditor : Editor
 
                 var row = dict.GetArrayElementAtIndex(dictSize);
 
-                row.FindPropertyRelative("key").stringValue = xx.String;
-                row.FindPropertyRelative("value").stringValue = kv;
+                var propType = cfield.Type;
+                SerializedProperty rowVal = null;
+
+                if (propType == DataType.String || propType == DataType.Number)
+                {
+
+                    rowVal = row.FindPropertyRelative("value");
+
+                    string kv = rowVal != null ? rowVal.stringValue : cfield.CastToString();
+
+                    kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
+
+                    row.FindPropertyRelative("key").stringValue = xx.String;
+                    rowVal.stringValue = kv;
+                }
+                else
+                {
+                    rowVal = row.FindPropertyRelative("ovalue");
+
+                    EditorGUILayout.ObjectField(rowVal, typeof(GameObject), new GUIContent(xx.String));
+
+                    //rowVal.objectReferenceValue = EditorGUILayout.ObjectField( new GUIContent(xx.String), (GameObject)rowVal.serializedObject.context, typeof(GameObject) , true );
+
+
+                }
 
                 dictSize++;
             }
