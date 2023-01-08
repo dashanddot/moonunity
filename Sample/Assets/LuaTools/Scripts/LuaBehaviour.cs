@@ -8,39 +8,13 @@ using MoonSharp.Interpreter.Loaders;
 using System.IO;
 
 [System.Serializable]
-public struct LuaKeyDict
+public class LuaKeyValueAny
 {
-    public List<string> Keys;
-    public List<string> Values;
+    public string key;
+    public string value;
+    public UnityEngine.Object ovalue;
 
-    public string this[string index]
-    {
-        get
-        {
-            int ii = Keys.IndexOf(index);
-
-            if (ii < 0)
-                return "";
-
-            return Values[ii];
-        }
-
-        set
-        {
-            int ii = Keys.IndexOf(index);
-
-            if (ii < 0)
-            {
-                ii = Keys.Count;
-                Keys.Add(index);
-                Values.Add("");
-            }
-
-            Values[ii] = value;
-        }
-    }
 }
-
 
 public class SanboxLuaLoader : IScriptLoader
 {
@@ -65,7 +39,7 @@ public class SanboxLuaLoader : IScriptLoader
     }
 }
 
-public class LuaBehaviour : MonoBehaviour
+public class LuaBehaviour : MonoBehaviour, ISerializationCallbackReceiver
 {
     public TextAsset script;
 
@@ -76,7 +50,7 @@ public class LuaBehaviour : MonoBehaviour
     protected Closure _update;
 
     [HideInInspector]
-    public LuaKeyDict _dict;
+    public List<LuaKeyValueAny> _dict;
 
     public void Awake()
     {
@@ -90,9 +64,9 @@ public class LuaBehaviour : MonoBehaviour
 
         _module = _script.DoString(script.text);
 
-        foreach ( var kk in _dict.Keys)
+        foreach ( var kk in _dict)
         {
-            _module.Table[kk] = DynValue.NewString( _dict[kk] );
+            _module.Table[kk.key] =  kk.value;
         }
 
         _module.Table.Get("Awake").Function?.Call();
@@ -111,11 +85,11 @@ public class LuaBehaviour : MonoBehaviour
 
         sco = _script.CreateCoroutine(sco);
 
-       
+        DynValue x = sco.Coroutine.Resume(_module);
 
         while (true)
         {
-            DynValue x = sco.Coroutine.Resume();
+            x = sco.Coroutine.Resume();
 
             yield return new WaitForSeconds((float)x.Number);
 
@@ -156,4 +130,13 @@ public class LuaBehaviour : MonoBehaviour
         _module.Table.Get("OnTriggerExit").Function?.Call(_module, UserData.Create(other));
     }
 
+    public void OnBeforeSerialize()
+    {
+        
+    }
+
+    public void OnAfterDeserialize()
+    {
+        
+    }
 }

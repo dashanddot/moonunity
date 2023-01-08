@@ -73,16 +73,9 @@ public class LuaBehaviourEditor : Editor
         {
 
             var dict = serializedObject.FindProperty("_dict");
-            var k = dict.FindPropertyRelative("Keys");
-            var v = dict.FindPropertyRelative("Values");
+
 
             int dictSize = 0;
-
-            if (k.arraySize != v.arraySize || k.arraySize != _module.Table.Length)
-            {
-                k.ClearArray();
-                v.ClearArray();
-            }
 
             foreach (var xx in _module.Table.Keys)
             {
@@ -91,23 +84,27 @@ public class LuaBehaviourEditor : Editor
                 if (cfield?.Type == DataType.Function)
                     continue;
 
-                var prew = v.arraySize > dictSize ? v.GetArrayElementAtIndex(dictSize) : null;
+                var prew = dict.arraySize > dictSize ? dict.GetArrayElementAtIndex(dictSize) : null;
 
-                string kv = prew != null ? prew.stringValue : cfield.CastToString();
+                string kv = prew != null ? prew.FindPropertyRelative("value").stringValue : cfield.CastToString();
 
                 kv = EditorGUILayout.TextField(new GUIContent(xx.String), kv);
 
-                if (dictSize <= k.arraySize)
+                if (dictSize <= dict.arraySize)
                 {
-                    k.InsertArrayElementAtIndex(dictSize);
-                    v.InsertArrayElementAtIndex(dictSize);
+                    dict.InsertArrayElementAtIndex(dictSize);
+                   
                 }
 
-                k.GetArrayElementAtIndex(dictSize).stringValue = xx.String;
-                v.GetArrayElementAtIndex(dictSize).stringValue = kv;
+                var row = dict.GetArrayElementAtIndex(dictSize);
+
+                row.FindPropertyRelative("key").stringValue = xx.String;
+                row.FindPropertyRelative("value").stringValue = kv;
 
                 dictSize++;
             }
+
+            dict.arraySize = dictSize;
 
         }
 
