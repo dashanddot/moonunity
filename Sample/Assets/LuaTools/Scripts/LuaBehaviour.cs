@@ -75,6 +75,7 @@ public class LuaBehaviour : MonoBehaviour, ISerializationCallbackReceiver
         UserData.RegisterType<GameObject>();
 
         _script.Globals.Set("gameObject", UserData.Create( gameObject ) ) ;
+        _script.Globals.Set("wait", DynValue.NewCallback( (ctx, args) => DynValue.NewYieldReq(args.GetArray()) ) );
 
         _module.Table.Get("Awake").Function?.Call(_module);
 
@@ -96,12 +97,13 @@ public class LuaBehaviour : MonoBehaviour, ISerializationCallbackReceiver
 
         while (true)
         {
-            x = sco.Coroutine.Resume();
-
+            
             yield return new WaitForSeconds((float)x.Number);
 
             if (sco.Coroutine.State == CoroutineState.Dead)
                 break;
+
+            x = sco.Coroutine.Resume();
         }
 
         yield break;

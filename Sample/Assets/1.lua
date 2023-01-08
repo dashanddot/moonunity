@@ -8,12 +8,14 @@ end
 function script:Start()
    print( string.format("Start %s", self.var ) );
 
+    wait(5);
+
    print( "1" );
-   coroutine.yield(0.5);
+   wait(0.5);
    print( "2" );
-   coroutine.yield(0.5);
+   wait(0.5);
    print( "3" );
-   coroutine.yield(1);
+   wait(1);
 
    gameObject:SetActive(false);
 end
