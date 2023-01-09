@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25a439f3bf114084d9c755e783f6fbd3, type: 3}
+  m_Name: PlayerConfigObject
+  m_EditorClassIdentifier: 
+  autoaimAngle: 10
+  autoaimForce: 2
+  accuracyOffsetTime: 0.1
+  thirdPersonOffset: {x: 0.5, y: 0, z: -1.5}
+  folowSpeed: 10
+  sniperNoAimAccuracy: 20
+  sensitivityY: 0
+  spreadSize: 700
+  maxHealth: 100
+  height: 1.8
+  heightCrounch: 1.3
+  autoFireDist: 30
+  autoFireDistAim: 90
+  sensitivityAim: 0.25
+  sensitivitySniperAim: 0.25
+  fullShotDelay: 1
+  thirdPersonYMul: 0.8
+  headHeight: 1.33
+  teleportDist: 3
+  anticheatDamageDist: 4
+  anticheatFromDist: 4
+  strafeSpeed: 5.9
+  damagePing: 200
+  newMeleeShortcutDist: 2
+  damegeDelay: 3
+  maxWallPlaceDist: 3
+  regenerationDelta: 2
+  explosionDamage: 110
+  addClipPerk: 50
+  hitDamagePerk_Damage: 30
+  hitDamagePerk_Accuracy: -50
+  addMoneyPerk: 0.5
+  respawnTime: 5
+  rayCastDist: 0.2
+  delaySniperShooting: 0.15
+  aimCrosshair: 20
+  damageShake:
+    Amplitude: 7
+    Duration: 0.1
+  maxPredictTime: 1
+  lerpTime: 0.05
+  GROUND_FRICTION: 9
+  AIR_FRICTION: 1
+  airAccelerate: 300
